@@ -3,6 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from haystack import component, default_from_dict, default_to_dict
 from haystack.dataclasses import StreamingChunk
 from haystack.utils.callable_serialization import deserialize_callable, serialize_callable
+from pydantic.json_schema import JsonSchemaValue
 
 from ollama import Client, GenerateResponse
 
@@ -165,6 +166,7 @@ class OllamaGenerator:
         self,
         prompt: str,
         generation_kwargs: Optional[Dict[str, Any]] = None,
+        format: Optional[Union[Literal['', 'json'], JsonSchemaValue]] = None,
     ):
         """
         Runs an Ollama Model on the given prompt.
@@ -184,7 +186,7 @@ class OllamaGenerator:
         stream = self.streaming_callback is not None
 
         response = self._client.generate(
-            model=self.model, prompt=prompt, stream=stream, keep_alive=self.keep_alive, options=generation_kwargs
+            model=self.model, prompt=prompt, stream=stream, keep_alive=self.keep_alive, options=generation_kwargs, format=format
         )
 
         if stream:
